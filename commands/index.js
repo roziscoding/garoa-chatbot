@@ -1,8 +1,16 @@
-const id = require('./id')
-const help = require('./help')
-const link = require('./link')
-const status = require('./status')
-const voteban = require('./voteban')
-const instaban = require('./instaban')
+const fs = require('fs')
+const path = require('path')
+const { promisify } = require('util')
 
-module.exports = { id, help, link, status, voteban, instaban }
+const readdir = promisify(fs.readdir)
+
+module.exports = {
+  async load () {
+    const commandFiles = await readdir(path.join(__dirname, 'defs'))
+    return commandFiles.reduce((commands, fileName) => {
+      const commandName = fileName.split('.')[0]
+      commands[commandName] = require(path.join(__dirname, 'defs', fileName))
+      return commands
+    }, {})
+  }
+}

@@ -8,4 +8,6 @@ const fn = msg => {
 
 fn.reply = true
 
+fn.regex = /\/id/
+
 module.exports = fn

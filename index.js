@@ -1,11 +1,11 @@
 const config = require('./config')
-const commands = require('./commands')
+const { load: loadCommands } = require('./commands')
 const TelegramBot = require('node-telegram-bot-api')
 
-const runCommand = async ({bot, command, msg, match, err}) => {
+const runCommand = async ({bot, command, msg, match, config, err}) => {
   let text
   try {
-    text = await command(msg, match, bot)
+    text = await command(msg, match, bot, config)
   } catch (e) {
     return err(e)
   }
@@ -33,56 +33,32 @@ const sendError = (bot, msg) => {
   }
 }
 
-const setupCommands = bot => async () => {
-  bot.onText(/\/help/, (msg, match) => runCommand({
-    bot,
-    command: commands.help,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
+const setupCommands = async bot => {
+  const commands = await loadCommands()
 
-  bot.onText(/\/status/, (msg, match) => runCommand({
-    bot,
-    command: commands.status,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
-
-  bot.onText(/\/voteban_?(\d+)? ?(.+)?/, (msg, match) => runCommand({
-    bot,
-    command: commands.voteban,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
-
-  bot.onText(/\/id/, (msg, match) => runCommand({
-    bot,
-    command: commands.id,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
-
-  bot.onText(/\/instaban/, (msg, match) => runCommand({
-    bot,
-    command: commands.instaban,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
-
-  bot.onText(/\/link/, (msg, match) => runCommand({
-    bot,
-    command: commands.link,
-    msg,
-    match,
-    err: sendError(bot, msg)
-  }))
+  for (const _command in commands) {
+    const command = commands[_command]
+    bot.onText(command.regex, (msg, match) => {
+      return runCommand({
+        bot,
+        command,
+        msg,
+        match,
+        config,
+        err: sendError(bot, msg)
+      })
+    })
+  }
 
   return Object.keys(commands)
+}
+
+const setupErrorEvent = async bot => {
+  bot.on('polling_error', err => {
+    console.error(err)
+  })
+
+  return bot
 }
 
 const start = () => {
@@ -92,8 +68,12 @@ const start = () => {
   })
 
   bot.getMe()
-    .then(me => console.log(`Escutando em @${me.username}`))
-    .then(setupCommands(bot))
+    .then(me => {
+      console.log(`Escutando em @${me.username}`)
+      return bot
+    })
+    .then(setupErrorEvent)
+    .then(setupCommands)
     .then(commands => console.log(`${commands.length} comandos carregados`))
     .catch()
 }

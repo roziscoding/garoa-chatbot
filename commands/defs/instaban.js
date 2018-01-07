@@ -22,4 +22,6 @@ const fn = async (msg, match, bot) => {
 
 fn.reply = true
 
+fn.regex = /\/instaban/
+
 module.exports = fn

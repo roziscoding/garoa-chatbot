@@ -1,22 +1,21 @@
 const votings = new Map()
-const { voteban: { minVotes } } = require('../config')
 
 const messages = {
   ERR_WRONG_CHAT_TYPE: 'Esse comando só pode ser executado em grupos!',
   ERR_NO_ID: 'Você precisa dar reply em quem quiser banir, ou usar `/voteban_[id do usuário]`'
 }
 
-const makeReport = (user, userVotings) => {
+const makeReport = (user, userVotings, config) => {
   const lines = []
   lines.push(`Usuario: ${user.first_name}`)
   lines.push(`Motivo: ${userVotings.reason}`)
   lines.push(`Votos: ${userVotings.count}`)
-  lines.push(`Vai ser banido quando tiver ${minVotes} votos.`)
+  lines.push(`Vai ser banido quando tiver ${config.voteban.minVotes} votos.`)
   lines.push(`Vote com /voteban_${user.id}`)
   return lines.join('\n')
 }
 
-const countUp = (chatId, user, reason, fromId) => {
+const countUp = (chatId, user, reason, fromId, config) => {
   let chatVotings = votings.get(chatId)
 
   if (!chatVotings) {
@@ -32,7 +31,7 @@ const countUp = (chatId, user, reason, fromId) => {
 
   if (userVotings.votes.includes(fromId)) {
     fn.reply = true
-    return `Você já votou para banir ${user.first_name}. Status atual: ${userVotings.count} votos computados de ${minVotes} necessários para o ban`
+    return `Você já votou para banir ${user.first_name}. Status atual: ${userVotings.count} votos computados de ${config.voteban.minVotes} necessários para o ban`
   }
 
   userVotings.votes.push(fromId)
@@ -52,7 +51,7 @@ const clear = (chatId, userId, fromId) => {
   votings.set(chatId, chatVotings)
 }
 
-const fn = async (msg, match, bot) => {
+const fn = async (msg, match, bot, config) => {
   if (!msg.chat.type.includes('group')) {
     console.log(msg.chat.type)
     throw new Error(messages.ERR_WRONG_CHAT_TYPE)
@@ -73,25 +72,27 @@ const fn = async (msg, match, bot) => {
     return `Banindo ${user.first_name} por espontânea vontade!`
   }
 
-  const userVotings = countUp(chatId.toString(), user, match[2], msg.from.id)
+  const userVotings = countUp(chatId.toString(), user, match[2], msg.from.id, config)
 
   if (typeof userVotings === 'string') {
     return userVotings
   }
 
   if (userVotings.count === 1) {
-    return makeReport(user, userVotings)
+    return makeReport(user, userVotings, config)
   }
 
-  if (userVotings.count >= minVotes) {
+  if (userVotings.count >= config.voteban.minVotes) {
     clear(chatId.toString(), user.id)
     await bot.kickChatMember(chatId, user.id)
     return `Banindo ${user.first_name}.\nMotivo: ${userVotings.reason}`
   }
 
-  return makeReport(user, userVotings)
+  return makeReport(user, userVotings, config)
 }
 
 fn.markdown = false
+
+fn.regex = /\/voteban_?(\d+)? ?(.+)?/
 
 module.exports = fn
