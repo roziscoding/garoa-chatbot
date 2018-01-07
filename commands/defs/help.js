@@ -11,4 +11,6 @@ const fn = async msg => {
 
 fn.markdown = false
 
+fn.regex = /\/help/
+
 module.exports = fn
