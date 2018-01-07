@@ -4,13 +4,13 @@
   "description": "Utils bot for garoa",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
   },
   "author": "Rogério Munhoz (@rjmunhoz)",
   "license": "MIT",
   "dependencies": {
     "axios": "^0.17.1",
-    "node-telegram-bot-api": "^0.30.0",
-    "prettyjson": "^1.2.1"
+    "node-telegram-bot-api": "^0.30.0"
   }
 }
