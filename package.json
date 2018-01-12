@@ -4,7 +4,7 @@
   "description": "Utils bot for garoa",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon index.js",
     "start": "node index.js"
   },
   "author": "Rogério Munhoz (@rjmunhoz)",
@@ -12,5 +12,8 @@
   "dependencies": {
     "axios": "^0.17.1",
     "node-telegram-bot-api": "^0.30.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.14.11"
   }
 }
