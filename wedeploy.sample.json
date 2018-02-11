@@ -1,0 +1,7 @@
+{
+    "id": "chatbot",
+    "env": {
+        "API_TOKEN": "YOUR BOT'S API TOKEN",
+        "MIN_VOTES": "MINIMUM VOTES REQUIRED TO BAN A USER"
+    }
+}
