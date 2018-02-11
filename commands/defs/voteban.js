@@ -51,20 +51,20 @@ const clear = (chatId, userId, fromId) => {
   votings.set(chatId, chatVotings)
 }
 
-const fn = async (msg, match, bot, config) => {
+const fn = async ({ msg, match, bot, config }) => {
   if (!msg.chat.type.includes('group')) {
     console.log(msg.chat.type)
     throw new Error(messages.ERR_WRONG_CHAT_TYPE)
   }
 
-  if (!msg.reply_to_message && !match[1]) {
+  if (!msg.reply_to_message && !match[ 1 ]) {
     throw new Error(messages.ERR_NO_ID)
   }
 
   const chatId = msg.chat.id
   const user = msg.reply_to_message
     ? msg.reply_to_message.from
-    : (await bot.getChatMember(msg.chat.id, match[1])).user
+    : (await bot.getChatMember(msg.chat.id, match[ 1 ])).user
 
   if (user.id === msg.from.id) {
     bot.kickChatMember(msg.chat.id, msg.from.id)
@@ -72,7 +72,7 @@ const fn = async (msg, match, bot, config) => {
     return `Banindo ${user.first_name} por espontânea vontade!`
   }
 
-  const userVotings = countUp(chatId.toString(), user, match[2], msg.from.id, config)
+  const userVotings = countUp(chatId.toString(), user, match[ 2 ], msg.from.id, config)
 
   if (typeof userVotings === 'string') {
     return userVotings

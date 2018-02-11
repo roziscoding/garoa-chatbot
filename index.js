@@ -1,14 +1,15 @@
+const axios = require('axios')
 const config = require('./config')
+const database = require('./lib/database')
 const { load: loadCommands } = require('./commands')
 const TelegramBot = require('node-telegram-bot-api')
-const axios = require('axios')
 
-const chatIds = [-1001130117322]
+const chatIds = [ -1001130117322 ]
 
-const runCommand = async ({bot, command, msg, match, config, err}) => {
+const runCommand = async ({ bot, command, msg, match, config, repositories, chat, err }) => {
   let text
   try {
-    text = await command(msg, match, bot, config)
+    text = await command({ msg, match, bot, config, repositories, chat })
   } catch (e) {
     return err(e)
   }
@@ -24,7 +25,7 @@ const runCommand = async ({bot, command, msg, match, config, err}) => {
   }
 
   bot.sendMessage(msg.chat.id, text, options)
-  .catch(err)
+    .catch(err)
 }
 
 const sendError = (bot, msg) => {
@@ -38,16 +39,28 @@ const sendError = (bot, msg) => {
 
 const setupCommands = async bot => {
   const commands = await loadCommands()
+  const { repositories } = database.factory(config.database)
 
   for (const _command in commands) {
-    const command = commands[_command]
-    bot.onText(command.regex, (msg, match) => {
+    const command = commands[ _command ]
+    bot.onText(command.regex, async (msg, match) => {
+      const chat = await repositories.chats.findById(msg.chat.id)
+
+      if (!chat) {
+        await repositories.chats.create({
+          id: msg.chat.id,
+          type: msg.chat.type
+        })
+      }
+
       return runCommand({
         bot,
         command,
         msg,
         match,
         config,
+        repositories,
+        chat,
         err: sendError(bot, msg)
       })
     })
