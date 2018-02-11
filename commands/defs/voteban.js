@@ -1,98 +1,107 @@
-const votings = new Map()
-
 const messages = {
   ERR_WRONG_CHAT_TYPE: 'Esse comando só pode ser executado em grupos!',
   ERR_NO_ID: 'Você precisa dar reply em quem quiser banir, ou usar `/voteban_[id do usuário]`'
 }
 
-const makeReport = (user, userVotings, config) => {
+const makeReport = (voting, config) => {
   const lines = []
-  lines.push(`Usuario: ${user.first_name}`)
-  lines.push(`Motivo: ${userVotings.reason}`)
-  lines.push(`Votos: ${userVotings.count}`)
+  lines.push(`Usuario: ${voting.target.name}`)
+  lines.push(`Motivo: ${voting.reason}`)
+  lines.push(`Votos: ${voting.votes.length}`)
   lines.push(`Vai ser banido quando tiver ${config.voteban.minVotes} votos.`)
-  lines.push(`Vote com /voteban_${user.id}`)
+  lines.push(`Vote com /voteban_${voting.target.id}`)
   return lines.join('\n')
 }
 
-const countUp = (chatId, user, reason, fromId, config) => {
-  let chatVotings = votings.get(chatId)
+const kickChatMember = async (chat, voting, repository, bot) => {
+  const finishedVoting = await repository
+    .removeByChatMember(voting.chat, voting.target.id)
 
-  if (!chatVotings) {
-    chatVotings = new Map()
-    votings.set(chatId, chatVotings)
-  }
+  const { target, votes } = finishedVoting
 
-  let userVotings = chatVotings.get(user.id) || {
-    count: 0,
-    reason: reason || 'Sem motivo',
-    votes: []
-  }
+  const voterNames = votes.map(vote => vote.name)
 
-  if (userVotings.votes.includes(fromId)) {
-    fn.reply = true
-    return `Você já votou para banir ${user.first_name}. Status atual: ${userVotings.count} votos computados de ${config.voteban.minVotes} necessários para o ban`
-  }
+  const message = voterNames.reduce((result, name) => {
+    result.push(name)
+    return result
+  }, [`Removendo ${target.name}, conforme votado por:`])
+    .join('\n')
 
-  userVotings.votes.push(fromId)
+  await bot.kickChatMember(chat.id, voting.target.id)
 
-  userVotings.count++
-
-  chatVotings.set(user.id, userVotings)
-
-  votings.set(chatId, chatVotings)
-
-  return userVotings
+  return message
 }
 
-const clear = (chatId, userId, fromId) => {
-  const chatVotings = votings.get(chatId)
-  chatVotings.delete(userId)
-  votings.set(chatId, chatVotings)
-}
+const fn = async ({ msg, match, bot, config, chat, repositories }) => {
+  const votingsRepository = repositories.votings
 
-const fn = async ({ msg, match, bot, config }) => {
-  if (!msg.chat.type.includes('group')) {
-    console.log(msg.chat.type)
+  if (!chat.type.includes('group')) {
     throw new Error(messages.ERR_WRONG_CHAT_TYPE)
   }
 
-  if (!msg.reply_to_message && !match[ 1 ]) {
+  if (!msg.reply_to_message && !match[1]) {
     throw new Error(messages.ERR_NO_ID)
   }
 
-  const chatId = msg.chat.id
-  const user = msg.reply_to_message
+  const chatId = chat._id
+  const targetUser = msg.reply_to_message
     ? msg.reply_to_message.from
-    : (await bot.getChatMember(msg.chat.id, match[ 1 ])).user
+    : (await bot.getChatMember(chat.id, match[1])).user
 
-  if (user.id === msg.from.id) {
+  if (targetUser.id === msg.from.id) {
+    const member = await bot.getChatMember(chat.id, targetUser.id)
+    if (['creator', 'administrator'].includes(member.status)) {
+      return `Não consigo te remover; saia sozinho!`
+    }
+    console.log(targetUser)
     bot.kickChatMember(msg.chat.id, msg.from.id)
-    clear(chatId, user.id)
-    return `Banindo ${user.first_name} por espontânea vontade!`
+    return `Banindo ${targetUser.first_name} por espontânea vontade!`
   }
 
-  const userVotings = countUp(chatId.toString(), user, match[ 2 ], msg.from.id, config)
-
-  if (typeof userVotings === 'string') {
-    return userVotings
+  const vote = {
+    id: msg.from.id,
+    name: msg.from.first_name,
+    username: msg.from.username
   }
 
-  if (userVotings.count === 1) {
-    return makeReport(user, userVotings, config)
+  const currentVoting = await votingsRepository.findByChatMember(chatId, targetUser.id)
+
+  if (!currentVoting) {
+    const target = {
+      id: targetUser.id,
+      name: targetUser.first_name,
+      username: targetUser.username
+    }
+
+    const reason = match[2] || 'Sem motivo'
+
+    const newVoting = await votingsRepository.create({
+      chatId,
+      target,
+      reason,
+      creator: vote
+    })
+
+    return makeReport(newVoting, config)
   }
 
-  if (userVotings.count >= config.voteban.minVotes) {
-    clear(chatId.toString(), user.id)
-    await bot.kickChatMember(chatId, user.id)
-    return `Banindo ${user.first_name}.\nMotivo: ${userVotings.reason}`
+  const voterIds = currentVoting.votes.map(vote => vote.id)
+
+  if (voterIds.includes(msg.from.id)) {
+    return `Você já votou para banir ${currentVoting.target.name}!`
   }
 
-  return makeReport(user, userVotings, config)
+  const updatedVoting = await votingsRepository.addVote(currentVoting._id, vote)
+
+  if (updatedVoting.votes.length >= config.voteban.minVotes) {
+    return kickChatMember(chat, updatedVoting, votingsRepository, bot)
+  }
+
+  return makeReport(updatedVoting, config)
 }
 
 fn.markdown = false
 
-fn.regex = /\/voteban_?(\d+)? ?(.+)?/
+fn.regex = /\/voteban_?(\d+)?@?[^\s]* ?(.+)?/
 
 module.exports = fn

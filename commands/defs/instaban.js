@@ -1,4 +1,4 @@
-const canBan = member => !member.can_restrict_members && member.status === 'creator'
+const canBan = member => !member.can_restrict_members || member.status === 'creator'
 
 const fn = async ({ msg, match, bot }) => {
   if (!msg.reply_to_message) {
