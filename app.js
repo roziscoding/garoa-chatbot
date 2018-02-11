@@ -1,10 +1,7 @@
-const axios = require('axios')
 const config = require('./config')
 const database = require('./lib/database')
 const { load: loadCommands } = require('./commands')
 const TelegramBot = require('node-telegram-bot-api')
-
-const chatIds = [ -1001130117322 ]
 
 const runCommand = async ({ bot, command, msg, match, config, repositories, chat, err }) => {
   let text
@@ -42,7 +39,7 @@ const setupCommands = async bot => {
   const { repositories } = database.factory(config.database)
 
   for (const _command in commands) {
-    const command = commands[ _command ]
+    const command = commands[_command]
     bot.onText(command.regex, async (msg, match) => {
       const chat = await repositories.chats.findById(msg.chat.id)
 
@@ -69,20 +66,6 @@ const setupCommands = async bot => {
   return Object.keys(commands)
 }
 
-const setupStatusMonitor = async bot => {
-  let previousStatus = (await axios(config.endpoints.garoa)).data.open
-  setTimeout(async () => {
-    const { data: { open } } = await axios(config.endpoints.garoa)
-    if (open !== previousStatus) {
-      const promises = chatIds.map(x => bot.sendMessage(x, `O garoa acaba de ${open ? 'abrir' : 'fechar'}!`))
-      await Promise.all(promises)
-        .catch(console.error)
-    }
-    previousStatus = open
-  }, 60000)
-  return bot
-}
-
 const setupErrorEvent = async bot => {
   bot.on('polling_error', err => {
     console.error(err)
@@ -102,11 +85,12 @@ const start = () => {
       console.log(`Escutando em @${me.username}`)
       return bot
     })
-    .then(setupStatusMonitor)
     .then(setupErrorEvent)
     .then(setupCommands)
     .then(commands => console.log(`${commands.length} comandos carregados`))
     .catch()
 }
 
-start()
+module.exports = {
+  start
+}

@@ -1,4 +1,4 @@
-const fn = ({ msg }) => {
+const fn = async ({ msg, chat, repositories }) => {
   return `\`\`\`\n${JSON.stringify(msg, null, 4)}\`\`\``
 }
 

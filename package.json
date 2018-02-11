@@ -4,8 +4,8 @@
   "description": "Utils bot for garoa",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon index.js",
-    "start": "node index.js"
+    "dev": "nodemon bin/start",
+    "start": "node bin/start"
   },
   "author": "Rogério Munhoz (@rjmunhoz)",
   "license": "MIT",
