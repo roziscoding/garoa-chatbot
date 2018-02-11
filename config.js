@@ -7,5 +7,8 @@ module.exports = {
   },
   voteban: {
     minVotes: process.env.MIN_VOTES || 10
+  },
+  database: {
+    uri: process.env.MONGO_URI
   }
 }

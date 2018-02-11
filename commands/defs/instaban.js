@@ -1,6 +1,6 @@
 const canBan = member => !member.can_restrict_members && member.status === 'creator'
 
-const fn = async (msg, match, bot) => {
+const fn = async ({ msg, match, bot }) => {
   if (!msg.reply_to_message) {
     throw new Error('Você precisa responder a uma mensagem de alguém que deseja banir!')
   }
