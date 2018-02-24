@@ -9,5 +9,6 @@ module.exports = {
   raw: require('./raw'),
   status: require('./status'),
   voteban: require('./voteban'),
-  votings: require('./votings')
+  votings: require('./votings'),
+  repo: require('./repo')
 }
