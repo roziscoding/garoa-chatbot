@@ -13,7 +13,7 @@ const makeReport = (voting, config) => {
   return lines.join('\n')
 }
 
-const kickChatMember = async (chat, voting, repository, bot) => {
+const kickChatMember = async (chat, voting, repository, responseTypes) => {
   const finishedVoting = await repository
     .removeByChatMember(voting.chat, voting.target.id)
 
@@ -24,38 +24,65 @@ const kickChatMember = async (chat, voting, repository, bot) => {
   const message = voterNames.reduce((result, name) => {
     result.push(name)
     return result
-  }, [`Removendo ${target.name}, conforme votado por:`])
+  }, [ `Removendo ${target.name}, conforme votado por:` ])
     .join('\n')
 
-  await bot.kickChatMember(chat.id, voting.target.id)
+  const result = [ {
+    type: responseTypes.TEXT,
+    content: message
+  }, {
+    type: responseTypes.ACTION,
+    action: 'kickChatMember',
+    parameters: [
+      chat.id,
+      voting.target.id
+    ]
+  } ]
 
-  return message
+  return result
 }
 
-const fn = async ({ msg, match, bot, config, chat, repositories }) => {
+const fn = async ({ msg, match, config, chat, repositories, accessors, responseTypes }) => {
+  const result = []
   const votingsRepository = repositories.votings
 
   if (!chat.type.includes('group')) {
     throw new Error(messages.ERR_WRONG_CHAT_TYPE)
   }
 
-  if (!msg.reply_to_message && !match[1]) {
+  if (!msg.reply_to_message && !match[ 1 ]) {
     throw new Error(messages.ERR_NO_ID)
   }
 
   const chatId = chat._id
   const targetUser = msg.reply_to_message
     ? msg.reply_to_message.from
-    : (await bot.getChatMember(chat.id, match[1])).user
+    : (await accessors.bot.getChatMember(chat.id, match[ 1 ])).user
 
   if (targetUser.id === msg.from.id) {
-    const member = await bot.getChatMember(chat.id, targetUser.id)
-    if (['creator', 'administrator'].includes(member.status)) {
-      return `Não consigo te remover; saia sozinho!`
+    const member = await accessors.bot.getChatMember(chat.id, targetUser.id)
+    if ([ 'creator', 'administrator' ].includes(member.status)) {
+      return [ {
+        type: responseTypes.TEXT,
+        content: `Não consigo te remover; saia sozinho!`
+      } ]
     }
-    console.log(targetUser)
-    bot.kickChatMember(msg.chat.id, msg.from.id)
-    return `Banindo ${targetUser.first_name} por espontânea vontade!`
+
+    result.push({
+      type: responseTypes.TEXT,
+      content: `Banindo ${targetUser.first_name} por espontânea vontade!`
+    })
+
+    result.push({
+      type: responseTypes.ACTION,
+      action: 'kickChatMember',
+      parameters: [
+        msg.chat.id,
+        msg.from.id
+      ]
+    })
+
+    return result
   }
 
   const vote = {
@@ -73,7 +100,7 @@ const fn = async ({ msg, match, bot, config, chat, repositories }) => {
       username: targetUser.username
     }
 
-    const reason = match[2] || 'Sem motivo'
+    const reason = match[ 2 ] || 'Sem motivo'
 
     const newVoting = await votingsRepository.create({
       chatId,
@@ -82,22 +109,30 @@ const fn = async ({ msg, match, bot, config, chat, repositories }) => {
       creator: vote
     })
 
-    return makeReport(newVoting, config)
+    result.push({
+      type: responseTypes.TEXT,
+      content: makeReport(newVoting, config)
+    })
+
+    return result
   }
 
   const voterIds = currentVoting.votes.map(vote => vote.id)
 
   if (voterIds.includes(msg.from.id)) {
-    return `Você já votou para banir ${currentVoting.target.name}!`
+    return [ {
+      type: responseTypes.TEXT,
+      content: `Você já votou para banir ${currentVoting.target.name}!`
+    } ]
   }
 
   const updatedVoting = await votingsRepository.addVote(currentVoting._id, vote)
 
   if (updatedVoting.votes.length >= config.voteban.minVotes) {
-    return kickChatMember(chat, updatedVoting, votingsRepository, bot)
+    return kickChatMember(chat, updatedVoting, votingsRepository, responseTypes)
   }
 
-  return makeReport(updatedVoting, config)
+  return result
 }
 
 fn.markdown = false

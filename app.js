@@ -1,28 +1,18 @@
 const config = require('./config')
 const database = require('./lib/database')
-const { load: loadCommands } = require('./commands')
+const commands = require('./commands')
 const TelegramBot = require('node-telegram-bot-api')
+const { types: responseTypes, handler: responseHandler } = require('./lib/response')
+const accessorsFactory = require('./lib/accessors')
 
-const runCommand = async ({ bot, command, msg, match, config, repositories, chat, err }) => {
-  let text
+const runCommand = async ({ bot, command, msg, match, repositories, chat, accessors, err }) => {
   try {
-    text = await command({ msg, match, bot, config, repositories, chat })
+    const result = await command({ msg, match, bot, config, repositories, chat, responseTypes, accessors })
+
+    await responseHandler(bot, msg.chat.id, result)
   } catch (e) {
     return err(e)
   }
-
-  const options = {}
-
-  if (command.reply) {
-    options.reply_to_message_id = msg.message_id
-  }
-
-  if (command.markdown !== false) {
-    options.parse_mode = 'Markdown'
-  }
-
-  bot.sendMessage(msg.chat.id, text, options)
-    .catch(err)
 }
 
 const sendError = (bot, msg) => {
@@ -35,11 +25,11 @@ const sendError = (bot, msg) => {
 }
 
 const setupCommands = async bot => {
-  const commands = await loadCommands()
   const { repositories } = database.factory(config.database)
+  const accessors = accessorsFactory(bot)
 
   for (const _command in commands) {
-    const command = commands[_command]
+    const command = commands[ _command ]
     bot.onText(command.regex, async (msg, match) => {
       const chat = await repositories.chats.findById(msg.chat.id)
 
@@ -58,6 +48,7 @@ const setupCommands = async bot => {
         config,
         repositories,
         chat,
+        accessors,
         err: sendError(bot, msg)
       })
     })

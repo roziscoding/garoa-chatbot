@@ -6,9 +6,12 @@ const phrases = [
   'Agente? Mas é o James Bond?'
 ]
 
-const fun = () => {
+const fun = ({ responseTypes }) => {
   const random = Math.floor(Math.random() * phrases.length)
-  return phrases[random]
+  return [{
+    type: responseTypes.TEXT,
+    content: phrases[ random ]
+  }]
 }
 
 fun.regex = /agente/ig
