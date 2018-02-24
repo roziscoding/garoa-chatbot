@@ -10,11 +10,11 @@ const makeCreatedString = (event, name, time, date) => {
   return `${start}${end}`
 }
 
-const fn = async ({ repositories, match }) => {
-  const [name, time, date] = match[1].split('::')
+const mainFn = async ({ repositories, match }) => {
+  const [ name, time, date ] = match[ 1 ].split('::')
 
   if (!name || !time) {
-    return `Informe o evento no padrão nome::hora::data! (A data é opcional)`
+    return 'Informe o evento no padrão `nome::hora::data`! (A data é opcional)'
   }
 
   if (!date) {
@@ -27,6 +27,13 @@ const fn = async ({ repositories, match }) => {
   const event = await repositories.events.create({ name, time, date: parsedDate })
 
   return makeCreatedString(event, name, time, date)
+}
+
+const fn = async ({ repositories, match, responseTypes }) => {
+  return [ {
+    type: responseTypes.TEXT,
+    content: await mainFn({ repositories, match })
+  } ]
 }
 
 module.exports = fn

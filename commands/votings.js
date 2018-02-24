@@ -1,6 +1,6 @@
 'use strict'
 
-const fn = async ({ repositories, chat }) => {
+const mainFn = async ({ repositories, chat }) => {
   const votings = await repositories.votings.findByChat(chat._id)
 
   if (votings.length <= 0) {
@@ -11,8 +11,15 @@ const fn = async ({ repositories, chat }) => {
     const s = voting.votes.length === 1 ? '' : 's'
     result.push(`${voting.target.name}: ${voting.votes.length} voto${s}`)
     return result
-  }, [`Votebans em progresso:`])
+  }, [ `Votebans em progresso:` ])
     .join('\n')
+}
+
+const fn = async ({ repositories, chat, responseTypes }) => {
+  return [ {
+    type: responseTypes.TEXT,
+    content: await mainFn({ repositories, chat })
+  } ]
 }
 
 fn.regex = /\/votings/

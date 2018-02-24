@@ -6,7 +6,7 @@ module.exports = {
     garoa: process.env.GAROA_API || 'http://garoahc.appspot.com/status'
   },
   voteban: {
-    minVotes: process.env.MIN_VOTES || 10
+    minVotes: parseInt(process.env.MIN_VOTES) || 10
   },
   database: {
     uri: process.env.MONGO_URI
