@@ -11,5 +11,6 @@ module.exports = {
   voteban: require('./voteban'),
   votings: require('./votings'),
   repo: require('./repo'),
-  quemliga: require('./quemliga')
+  quemliga: require('./quemliga'),
+  ping: require('./ping')
 }
