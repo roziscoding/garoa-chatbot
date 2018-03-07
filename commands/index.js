@@ -10,5 +10,6 @@ module.exports = {
   status: require('./status'),
   voteban: require('./voteban'),
   votings: require('./votings'),
-  repo: require('./repo')
+  repo: require('./repo'),
+  quemliga: require('./quemliga')
 }
