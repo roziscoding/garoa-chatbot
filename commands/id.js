@@ -9,7 +9,7 @@ const mainFn = ({ msg }) => {
 const fn = async ({ msg, responseTypes }) => {
   return [ {
     type: responseTypes.TEXT,
-    content: [ await mainFn({ msg }) ]
+    content: await mainFn({ msg })
   } ]
 }
 
