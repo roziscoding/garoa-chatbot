@@ -1,5 +1,6 @@
 module.exports = {
   agente: require('./agente'),
+  anchises: require('./anchises'),
   events: require('./events'),
   help: require('./help'),
   id: require('./id'),
