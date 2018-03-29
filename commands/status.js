@@ -17,6 +17,6 @@ const fn = async ({ msg, match, config, responseTypes }) => {
   } ]
 }
 
-fn.regex = /\/status/
+fn.regex = /^\/status/
 
 module.exports = fn
