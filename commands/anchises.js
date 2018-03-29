@@ -1,7 +1,9 @@
 const anchises = [
   'CAADAQADRgAD7ZHbBS6ynzon48QBAg',
   'CAADAQADFQAD7ZHbBXN-aMYOGc0RAg',
-  'CAADAQADVgAD7ZHbBcoAAebRoLOFqAI'
+  'CAADAQADVgAD7ZHbBcoAAebRoLOFqAI',
+  'CAADAQADQAAD7ZHbBU2RSmllnczEAg',
+  'CAADAQADoQAD7ZHbBbu3Qxibx1tKAg'
 ]
 
 const fun = ({ msg, responseTypes }) => {
