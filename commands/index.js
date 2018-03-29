@@ -1,17 +1,18 @@
 module.exports = {
-  agente: require('./agente'),
-  anchises: require('./anchises'),
-  events: require('./events'),
-  help: require('./help'),
   id: require('./id'),
-  instaban: require('./instaban'),
-  link: require('./link'),
-  newEvent: require('./newEvent'),
   raw: require('./raw'),
+  help: require('./help'),
+  link: require('./link'),
+  ping: require('./ping'),
+  repo: require('./repo'),
+  agente: require('./agente'),
+  events: require('./events'),
+  otario: require('./otario'),
   status: require('./status'),
   voteban: require('./voteban'),
   votings: require('./votings'),
-  repo: require('./repo'),
-  quemliga: require('./quemliga'),
-  ping: require('./ping')
+  anchises: require('./anchises'),
+  instaban: require('./instaban'),
+  newEvent: require('./newEvent'),
+  quemliga: require('./quemliga')
 }
