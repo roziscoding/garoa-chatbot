@@ -1,0 +1,10 @@
+#!/usr/bin/env node
+
+'use strict'
+
+const app = require('../app')
+const env = require('sugar-env')
+const config = require('../config')
+
+app(config, env.current)
+  .start()

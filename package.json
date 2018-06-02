@@ -2,13 +2,13 @@
   "name": "garoa-chatbot",
   "version": "1.0.0",
   "description": "Utils bot for garoa",
-  "main": "index.js",
+  "main": "bin/start",
   "scripts": {
     "start": "node bin/start",
-    "start:debug": "nodemon bin/start"
+    "start:debug": "DEBUG=botify:*,garoa-chatbot:* nodemon bin/start"
   },
   "contributors": [
-    "Rogério Munhoz (@rjmunhoz)"
+    "Rogério Munhoz <rogerio.j.munhoz@gmail.com>"
   ],
   "license": "MIT",
   "dependencies": {
@@ -16,6 +16,6 @@
     "sugar-env": "^1.4.0"
   },
   "devDependencies": {
-    "nodemon": "^1.14.11"
+    "nodemon": "^1.17.5"
   }
 }
