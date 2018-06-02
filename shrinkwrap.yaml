@@ -1,0 +1,75 @@
+dependencies:
+  '@rjmunhoz/botify': 1.4.0
+  sugar-env: 1.4.0
+packages:
+  /@rjmunhoz/botify/1.4.0:
+    dependencies:
+      debug: 3.1.0
+      lodash.merge: 4.6.1
+      telegraf: 3.21.2
+    dev: false
+    resolution:
+      integrity: sha512-Gzarug8AenBTUWnkvhFpNH5EIQQUCVdTHf2knPdLEpTqE4yO6Td5mjbS/PZdM79N3zK32zsOc0XVT1Egdz4UQQ==
+  /@types/node/10.3.0:
+    dev: false
+    resolution:
+      integrity: sha512-hWzNviaVFIr1TqcRA8ou49JaSHp+Rfabmnqg2kNvusKqLhPU0rIsGPUj5WJJ7ld4Bb7qdgLmIhLfCD1qS08IVA==
+  /debug/3.1.0:
+    dependencies:
+      ms: 2.0.0
+    dev: false
+    resolution:
+      integrity: sha512-OX8XqP7/1a9cqkxYw2yXss15f26NKWBpDXQd0/uK/KPqdQhxbPa994hnzjcE2VqQpDslf55723cKPUOGSmMY3g==
+  /lodash.merge/4.6.1:
+    dev: false
+    resolution:
+      integrity: sha512-AOYza4+Hf5z1/0Hztxpm2/xiPZgi/cjMqdnKTUWTBSKchJlxXXuUSxCCl8rJlf4g6yww/j6mA8nC8Hw/EZWxKQ==
+  /ms/2.0.0:
+    dev: false
+    resolution:
+      integrity: sha1-VgiurfwAvmwpAd9fmGF4jeDVl8g=
+  /node-fetch/2.1.2:
+    dev: false
+    engines:
+      node: 4.x || >=6.0.0
+    resolution:
+      integrity: sha1-q4hOjn5X44qUR1POxwb3iNF2i7U=
+  /sandwich-stream/1.0.0:
+    dev: false
+    engines:
+      node: '>= 0.10'
+    resolution:
+      integrity: sha1-eDDkV5e1kzKH8fmyj4cZB0ViYvI=
+  /sugar-env/1.4.0:
+    dev: false
+    resolution:
+      integrity: sha512-/Y6z8Wt7JS+m8ZSQDYPrHs5fmoyhT2/C3v0fFy8fHINl6g9H3jxJZJZQKasZkWayBmLu+iKsGb5+2az/kjaUog==
+  /telegraf/3.21.2:
+    dependencies:
+      '@types/node': 10.3.0
+      debug: 3.1.0
+      node-fetch: 2.1.2
+      sandwich-stream: 1.0.0
+      telegram-typings: 3.6.1
+      typescript: 2.9.1
+    dev: false
+    engines:
+      node: '>=6.2.0'
+    resolution:
+      integrity: sha512-hstPgYodQZuPN3yEZp1FRfeawz7yxrLx0C7KYYz4v4BPF53PnWYTpbwl4bg+VCRf0B/YIN1dYo/wZVQIxTWArw==
+  /telegram-typings/3.6.1:
+    dev: false
+    resolution:
+      integrity: sha512-njVv1EAhIZnmQVLocZEADYUyqA1WIXuVcDYlsp+mXua/XB0pxx+PKtMSPeZ/EE4wPWTw9h/hA9ASTT6yQelkiw==
+  /typescript/2.9.1:
+    dev: false
+    engines:
+      node: '>=4.2.0'
+    resolution:
+      integrity: sha512-h6pM2f/GDchCFlldnriOhs1QHuwbnmj6/v7499eMHqPeW4V2G0elua2eIc2nu8v2NdHV0Gm+tzX83Hr6nUFjQA==
+registry: 'https://registry.npmjs.org/'
+shrinkwrapMinorVersion: 7
+shrinkwrapVersion: 3
+specifiers:
+  '@rjmunhoz/botify': ^1.4.0
+  sugar-env: ^1.4.0

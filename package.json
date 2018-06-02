@@ -7,13 +7,13 @@
     "start": "node bin/start",
     "start:debug": "nodemon bin/start"
   },
-  "author": "Rogério Munhoz (@rjmunhoz)",
+  "contributors": [
+    "Rogério Munhoz (@rjmunhoz)"
+  ],
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.17.1",
-    "moment": "^2.20.1",
-    "mongoose": "^4.13.9",
-    "node-telegram-bot-api": "^0.30.0"
+    "@rjmunhoz/botify": "^1.4.0",
+    "sugar-env": "^1.4.0"
   },
   "devDependencies": {
     "nodemon": "^1.14.11"
