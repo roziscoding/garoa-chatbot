@@ -15,5 +15,6 @@ module.exports = {
   instaban: require('./instaban'),
   newEvent: require('./newEvent'),
   quemliga: require('./quemliga'),
-  endereco: require('./endereco')
+  endereco: require('./endereco'),
+  mapa: require('./mapa')
 }
