@@ -14,5 +14,6 @@ module.exports = {
   anchises: require('./anchises'),
   instaban: require('./instaban'),
   newEvent: require('./newEvent'),
-  quemliga: require('./quemliga')
+  quemliga: require('./quemliga'),
+  endereco: require('./endereco')
 }
