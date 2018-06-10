@@ -1,5 +1,5 @@
 const fn = async ({ msg, match, responseTypes, accessors }) => {
-  const chatLink = await accessors.bot.getChatLink(msg.chat.id)
+  const chatLink = "https://t.me/garoactf"
   return [ {
     type: responseTypes.TEXT,
     content: `Link do grupo: ${chatLink}`
