@@ -7,6 +7,8 @@ module.exports = {
   link: require('./link'),
   ping: require('./ping'),
   repo: require('./repo'),
+  mapa: require('./mapa'),
+  gs2w: require('./gs2win'),
   agente: require('./agente'),
   events: require('./events'),
   otario: require('./otario'),
@@ -18,5 +20,4 @@ module.exports = {
   newEvent: require('./newEvent'),
   quemliga: require('./quemliga'),
   endereco: require('./endereco'),
-  mapa: require('./mapa')
 }
