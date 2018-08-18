@@ -1,3 +1,5 @@
+'use strict'
+
 const anchises = [
   'CAADAQADRgAD7ZHbBS6ynzon48QBAg',
   'CAADAQADFQAD7ZHbBXN-aMYOGc0RAg',

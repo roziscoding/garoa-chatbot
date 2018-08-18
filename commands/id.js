@@ -1,3 +1,5 @@
+'use strict'
+
 const mainFn = ({ msg }) => {
   if (msg.reply_to_message) {
     return `${msg.reply_to_message.from.first_name}: ${msg.reply_to_message.from.id}`

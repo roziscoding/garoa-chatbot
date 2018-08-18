@@ -1,3 +1,5 @@
+'use strict'
+
 const fn = async ({ responseTypes }) => {
   return [{
     type: responseTypes.TEXT,

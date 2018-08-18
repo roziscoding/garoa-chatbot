@@ -1,3 +1,5 @@
+'use strict'
+
 const canBan = member => member.can_restrict_members || member.status === 'creator'
 
 const fn = async ({ msg, match, responseTypes, accessors }) => {

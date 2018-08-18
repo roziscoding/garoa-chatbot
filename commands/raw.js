@@ -1,3 +1,5 @@
+'use strict'
+
 const fn = async ({ msg, chat, repositories, responseTypes }) => {
   return [ {
     type: responseTypes.TEXT,

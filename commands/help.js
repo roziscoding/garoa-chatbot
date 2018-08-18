@@ -1,3 +1,5 @@
+'use strict'
+
 const helpText = []
 
 helpText.push('/voteban {motivo} - Inicia votação para banir um usuário (Só funciona com reply)')

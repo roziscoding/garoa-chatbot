@@ -1,3 +1,5 @@
+'use strict'
+
 const phrases = [
   'Mas é agente do FBI?',
   'Oloco, agente secreto?',

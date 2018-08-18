@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   telegram: {
     API_TOKEN: process.env.API_TOKEN

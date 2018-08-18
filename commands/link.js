@@ -1,3 +1,5 @@
+'use strict'
+
 const fn = async ({ msg, match, responseTypes, accessors }) => {
   const chatLink = "https://t.me/garoactf"
   return [ {

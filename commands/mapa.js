@@ -1,3 +1,5 @@
+'use strict'
+
 const fn = async ({ msg, match, config, responseTypes }) => {
 
   return [ {

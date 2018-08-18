@@ -1,3 +1,5 @@
+'use strict'
+
 const messages = {
   ERR_WRONG_CHAT_TYPE: 'Esse comando só pode ser executado em grupos!',
   ERR_NO_ID: 'Você precisa dar reply em quem quiser banir, ou usar `/voteban_[id do usuário]`'

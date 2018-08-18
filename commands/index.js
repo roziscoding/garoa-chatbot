@@ -1,3 +1,5 @@
+'use strict'
+
 module.exports = {
   id: require('./id'),
   raw: require('./raw'),

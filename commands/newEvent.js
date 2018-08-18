@@ -1,4 +1,5 @@
 'use strict'
+
 const moment = require('moment')
 
 const makeCreatedString = (event, name, time, date) => {

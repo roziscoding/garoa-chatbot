@@ -1,3 +1,5 @@
+'use strict'
+
 const FILE_ID = 'CAADAQADXAIAAggBeQdw-0KxiDBssgI'
 
 const fun = ({ responseTypes }) => {
