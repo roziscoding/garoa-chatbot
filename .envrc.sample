@@ -1,0 +1,4 @@
+export API_TOKEN=
+export GAROA_API=
+export MIN_VOTES=
+export MONGO_URI=
