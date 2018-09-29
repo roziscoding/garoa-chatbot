@@ -3,7 +3,7 @@
 module.exports = {
   id: require('./id'),
   raw: require('./raw'),
-  help: require('./help'),
+  // help: require('./help'),
   link: require('./link'),
   ping: require('./ping'),
   repo: require('./repo'),
