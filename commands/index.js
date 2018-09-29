@@ -13,11 +13,12 @@ module.exports = {
   events: require('./events'),
   otario: require('./otario'),
   status: require('./status'),
+  horario: require('./horario'),
   voteban: require('./voteban'),
   votings: require('./votings'),
   anchises: require('./anchises'),
   instaban: require('./instaban'),
   newEvent: require('./newEvent'),
   quemliga: require('./quemliga'),
-  endereco: require('./endereco'),
+  endereco: require('./endereco')
 }
