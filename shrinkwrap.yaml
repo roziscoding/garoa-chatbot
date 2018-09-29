@@ -3,6 +3,7 @@ dependencies:
   lodash.sample: 4.2.1
   moment: 2.22.2
   mongoose: 4.13.15
+  node-emoji: 1.8.1
   node-telegram-bot-api: 0.30.0
 devDependencies:
   nodemon: 1.18.3
@@ -1182,6 +1183,10 @@ packages:
     dev: false
     resolution:
       integrity: sha1-XkKRsMdT+hq+sKq4+ynfG2bwf20=
+  /lodash.toarray/4.4.0:
+    dev: false
+    resolution:
+      integrity: sha1-JMS/zWsvuji/0FlNsRedjptlZWE=
   /lodash/4.17.10:
     dev: false
     resolution:
@@ -1373,6 +1378,12 @@ packages:
       node: '>=0.10.0'
     resolution:
       integrity: sha512-fpoe2T0RbHwBTBUOftAfBPaDEi06ufaUai0mE6Yn1kacc3SnTErfb/h+X94VXzI64rKFHYImXSvdwGGCmwOqCA==
+  /node-emoji/1.8.1:
+    dependencies:
+      lodash.toarray: 4.4.0
+    dev: false
+    resolution:
+      integrity: sha512-+ktMAh1Jwas+TnGodfCfjUbJKoANqPaJFN0z0iqh41eqD8dvguNzcitVSBSVK1pidz0AqGbLKcoVuVLRVZ/aVg==
   /node-telegram-bot-api/0.30.0:
     dependencies:
       array.prototype.findindex: 2.0.2
@@ -2207,5 +2218,6 @@ specifiers:
   lodash.sample: ^4.2.1
   moment: ^2.20.1
   mongoose: ^4.13.9
+  node-emoji: ^1.8.1
   node-telegram-bot-api: ^0.30.0
   nodemon: ^1.17.5
