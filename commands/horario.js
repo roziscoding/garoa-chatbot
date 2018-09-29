@@ -8,11 +8,11 @@ const craftMessage = () => ([
   '1) Dar uma olhada na [página de eventos](https://garoa.net.br/wiki/Categoria:Eventos) da wiki',
   '2) Perguntar aqui, ou no grupo público, se alguém vai pra lá no dia em que você pretende ir `(e não se o Garoa vai estar aberto)`',
   '',
-  'Se quiser mais detalhes sobre atividades, é só mandar um /atividades (de preferência, no privado :thumbsup:) que eu te explico melhor e, se quiser saber se tem alguém lá agora, é só mandar /status',
+  'Se quiser saber se tem alguém lá agora, é só mandar /status',
   '',
   'Por último, se quiser o Garoa sempre aberto quando você precisar, dá uma olhada em [como ser um associado](https://garoa.net.br/wiki/Como_se_associar) :sunglasses:',
   '',
-  '#horario'
+  '#horario #eventos #atividades #associado'
 ].join('\n'))
 
 module.exports = ({ responseTypes }) => {
@@ -26,4 +26,4 @@ module.exports = ({ responseTypes }) => {
   }]
 }
 
-module.exports.regex = /^\/horario$/
+module.exports.regex = /^\/horario$/i
