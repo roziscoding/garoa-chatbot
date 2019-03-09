@@ -32,4 +32,4 @@ const fn = async ({ repositories, chat, responseTypes }) => {
 }
 
 module.exports = fn
-module.exports.regex = /\/events/
+module.exports.regex = /^\/events/
