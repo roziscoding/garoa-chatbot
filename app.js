@@ -1,11 +1,13 @@
 'use strict'
 
 const config = require('./config')
-const database = require('./lib/database')
 const commands = require('./commands')
+const database = require('./lib/database')
+const accessorsFactory = require('./lib/accessors')
 const TelegramBot = require('node-telegram-bot-api')
 const { types: responseTypes, handler: responseHandler } = require('./lib/response')
-const accessorsFactory = require('./lib/accessors')
+
+const getWebHookUrl = ({ webhook: { hostname }, API_TOKEN }) => `https://${hostname}/${API_TOKEN}`
 
 const runCommand = async ({ bot, command, msg, match, repositories, chat, accessors, err }) => {
   try {
@@ -69,11 +71,16 @@ const setupErrorEvent = async bot => {
 
 const start = () => {
   const bot = new TelegramBot(config.telegram.API_TOKEN, {
-    polling: true,
+    webHook: {
+      autoOpen: true,
+      port: config.telegram.webhook.port,
+      host: config.telegram.webhook.bindingHost
+    },
     onlyFirstMatch: true
   })
 
-  bot.getMe()
+  bot.setWebHook(getWebHookUrl(config.telegram))
+    .then(() => bot.getMe())
     .then(me => {
       console.log(`Escutando em @${me.username}`)
       return bot
@@ -81,7 +88,7 @@ const start = () => {
     .then(setupErrorEvent)
     .then(setupCommands)
     .then(commands => console.log(`${commands.length} comandos carregados`))
-    .catch()
+    .catch(err => { console.error(err); process.exit(1) })
 }
 
 module.exports = {
