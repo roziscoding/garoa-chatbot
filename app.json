@@ -5,7 +5,7 @@
   "logo": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Logo_GaroaHC_verde.png",
   "keywords": ["node", "telegram", "chatbot", "garoa", "hackerspace"],
   "env": {
-    "MONGODB_URI": {
+    "MONGO_URI": {
       "description": "Full mongodb URI",
       "required": true
     },
