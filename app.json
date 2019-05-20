@@ -1,0 +1,37 @@
+{
+  "name": "Garoa Hackerclub Chatbot",
+  "description": "A Telegram chatbot made for Garoa Hackerclub",
+  "repository": "https://github.com/rjmunhoz/garoa-chatbot",
+  "logo": "https://upload.wikimedia.org/wikipedia/commons/f/f8/Logo_GaroaHC_verde.png",
+  "keywords": ["node", "telegram", "chatbot", "garoa", "hackerspace"],
+  "env": {
+    "MONGODB_URI": {
+      "description": "Full mongodb URI",
+      "required": true
+    },
+    "API_TOKEN": {
+        "description": "Telegram API token for the chatbot",
+        "required": true
+    },
+    "TELEGRAM_WEBHOOK_HOSTNAME": {
+        "description": "You application's heroku hostname",
+        "required": true
+    },
+    "TELEGRAM_WEBHOOK_PORT": {
+        "description": "The port to listen to. Takes precedence over the heroku defined one",
+        "required": false
+    },
+    "TELEGRAM_WEBHOOK_BINDINGHOST": {
+      "description": "The host or IP to bind to. Defaults to 0.0.0.0",
+      "required": false
+    },
+    "GAROA_API": {
+        "description": "Garoa's API URL, if it changes",
+        "required": false
+    },
+    "MIN_VOTES": {
+        "description": "Minimum number of votes needed to ban someone. The default is 10",
+        "required": false
+    }
+  }
+}
