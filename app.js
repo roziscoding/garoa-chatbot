@@ -3,8 +3,10 @@
 const config = require('./config')
 const commands = require('./commands')
 const database = require('./lib/database')
+const DomainError = require('./lib/DomainError')
 const accessorsFactory = require('./lib/accessors')
 const TelegramBot = require('node-telegram-bot-api')
+const callbackHandlers = require('./callback-handlers')
 const { types: responseTypes, handler: responseHandler } = require('./lib/response')
 
 const getWebHookUrl = ({ webhook: { hostname }, API_TOKEN }) => `https://${hostname}/${API_TOKEN}`
@@ -19,8 +21,21 @@ const runCommand = async ({ bot, command, msg, match, repositories, chat, access
   }
 }
 
+const handleCallbackQuery = async ({ bot, handler, query, match, repositories, err }) => {
+  try {
+    const result = await handler({ query, match, repositories, responseTypes, config })
+
+    await responseHandler(bot, query.message.chat.id, result)
+  } catch (e) {
+    return err(e)
+  }
+}
+
 const sendError = (bot, msg) => {
   return (err) => {
+    if (err instanceof DomainError) {
+      return bot.sendMessage(msg.chat.id, err.message, { parse_mode: 'Markdown' })
+    }
     console.error(err)
     bot.sendMessage(msg.chat.id, `Erro ao executar comando: ${err.message}`, {
       parse_mode: 'Markdown'
@@ -28,12 +43,26 @@ const sendError = (bot, msg) => {
   }
 }
 
-const setupCommands = async bot => {
+const sendCallbackError = (bot, queryId) => {
+  return (err) => {
+    if (err instanceof DomainError) {
+      return bot.answerCallbackQuery(queryId, { text: err.message, show_alert: true })
+    }
+
+    console.error(err)
+    bot.answerCallbackQuery(queryId, { text: `Erro ao processar solicitação: ${err.message}`, show_alert: true })
+  }
+}
+
+const setupDependencies = bot => {
   const { repositories } = database.factory(config.database)
   const accessors = accessorsFactory(bot)
 
-  for (const _command in commands) {
-    const command = commands[ _command ]
+  return { bot, repositories, accessors }
+}
+
+const setupCommands = async ({ bot, repositories, accessors }) => {
+  for (const [ , command ] of Object.entries(commands)) {
     bot.onText(command.regex, async (msg, match) => {
       const chat = await repositories.chats.findById(msg.chat.id)
 
@@ -58,7 +87,28 @@ const setupCommands = async bot => {
     })
   }
 
-  return Object.keys(commands)
+  return { bot, repositories, accessors, commands: Object.keys(commands) }
+}
+
+const setupCallbackQueries = async ({ bot, repositories, accessors, commands }) => {
+  bot.on('callback_query', (query) => {
+    if (!query.message || !query.message.chat || !query.message.chat.id) return
+
+    const handler = callbackHandlers.getHandler(query.data)
+
+    if (!handler) return
+
+    return handleCallbackQuery({
+      bot,
+      handler,
+      query,
+      match: query.data.match(handler.regex),
+      repositories,
+      err: sendCallbackError(bot, query.id)
+    })
+  })
+
+  return { bot, repositories, accessors, commands }
 }
 
 const setupErrorEvent = async bot => {
@@ -86,8 +136,10 @@ const start = () => {
       return bot
     })
     .then(setupErrorEvent)
+    .then(setupDependencies)
     .then(setupCommands)
-    .then(commands => console.log(`${commands.length} comandos carregados`))
+    .then(setupCallbackQueries)
+    .then(({ commands }) => console.log(`${commands.length} comandos carregados`))
     .catch(err => { console.error(err); process.exit(1) })
 }
 

@@ -1,5 +1,7 @@
 'use strict'
 
+const kickChatMember = require('../util/kick-chat-member')
+
 const messages = {
   ERR_WRONG_CHAT_TYPE: 'Esse comando só pode ser executado em grupos!',
   ERR_NO_ID: 'Você precisa dar reply em quem quiser banir, ou usar `/voteban_[id do usuário]`'
@@ -11,37 +13,20 @@ const makeReport = (voting, config) => {
   lines.push(`Motivo: ${voting.reason}`)
   lines.push(`Votos: ${voting.votes.length}`)
   lines.push(`Vai ser banido quando tiver ${config.voteban.minVotes} votos.`)
-  lines.push(`Vote com /voteban_${voting.target.id}`)
   return lines.join('\n')
 }
 
-const kickChatMember = async (chat, voting, repository, responseTypes) => {
-  const finishedVoting = await repository
-    .removeByChatMember(voting.chat, voting.target.id)
-
-  const { target, votes } = finishedVoting
-
-  const voterNames = votes.map(vote => vote.name)
-
-  const message = voterNames.reduce((result, name) => {
-    result.push(name)
-    return result
-  }, [ `Removendo ${target.name}, conforme votado por:` ])
-    .join('\n')
-
-  const result = [ {
-    type: responseTypes.TEXT,
-    content: message
-  }, {
-    type: responseTypes.ACTION,
-    action: 'kickChatMember',
-    parameters: [
-      chat.id,
-      voting.target.id
-    ]
-  } ]
-
-  return result
+function makeKeyboardMarkup (votingId, targetName) {
+  return {
+    reply_markup: {
+      inline_keyboard: [
+        [{
+          text: `Votar para banir ${targetName}`,
+          callback_data: `voteban_${votingId}`
+        }]
+      ]
+    }
+  }
 }
 
 const fn = async ({ msg, match, config, chat, repositories, accessors, responseTypes }) => {
@@ -113,28 +98,22 @@ const fn = async ({ msg, match, config, chat, repositories, accessors, responseT
 
     result.push({
       type: responseTypes.TEXT,
-      content: makeReport(newVoting, config)
+      content: makeReport(newVoting, config),
+      options: makeKeyboardMarkup(newVoting._id, target.name)
     })
 
     return result
   }
 
-  const voterIds = currentVoting.votes.map(vote => vote.id)
+  const voteCount = currentVoting.votes.length
 
-  if (voterIds.includes(msg.from.id)) {
-    return [ {
+  return [
+    {
       type: responseTypes.TEXT,
-      content: `Você já votou para banir ${currentVoting.target.name}!`
-    } ]
-  }
-
-  const updatedVoting = await votingsRepository.addVote(currentVoting._id, vote)
-
-  if (updatedVoting.votes.length >= config.voteban.minVotes) {
-    return kickChatMember(chat, updatedVoting, votingsRepository, responseTypes)
-  }
-
-  return result
+      content: `Já existe uma votação com ${currentVoting.votes.length} voto${voteCount > 1 ? 's' : ''} para banir ${currentVoting.target.name}.\nPara votar, clique no botão abaixo`,
+      options: makeKeyboardMarkup(currentVoting._id, currentVoting.target.name)
+    }
+  ]
 }
 
 fn.markdown = false
