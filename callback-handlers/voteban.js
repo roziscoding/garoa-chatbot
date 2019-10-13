@@ -3,7 +3,7 @@
 const DomainError = require('../lib/DomainError')
 const kickChatMember = require('../util/kick-chat-member')
 
-const fn = async ({ query, match, repositories: { votings: votingsRepository }, responseTypes, config }) => {
+const fn = async ({ query, match, repositories: { votings: votingsRepository }, responseTypes, config, accessors }) => {
   if (!match.groups || !match.groups.votingId) return []
   const msg = query.message
   const { votingId } = match.groups
@@ -14,16 +14,20 @@ const fn = async ({ query, match, repositories: { votings: votingsRepository }, 
 
   const voterIds = voting.votes.map(vote => vote.id)
 
-  if (voterIds.includes(msg.from.id)) {
+  if (voterIds.includes(query.from.id)) {
     throw new DomainError(`Você já votou para banir ${voting.target.name}!`)
   }
 
   const result = []
 
+  if (voting.target.id === query.from.id) {
+    throw new DomainError('Você não pode votar para banir a si mesmo')
+  }
+
   const vote = {
-    id: msg.from.id,
-    name: msg.from.first_name,
-    username: msg.from.username
+    id: query.from.id,
+    name: query.from.first_name,
+    username: query.from.username
   }
 
   const updatedVoting = await votingsRepository.addVote(voting._id, vote)

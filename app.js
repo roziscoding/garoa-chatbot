@@ -25,9 +25,9 @@ const runCommand = async ({ bot, command, msg, match, repositories, chat, access
   }
 }
 
-const handleCallbackQuery = async ({ bot, handler, query, match, repositories, err }) => {
+const handleCallbackQuery = async ({ bot, handler, query, match, accessors, repositories, err }) => {
   try {
-    const result = await handler({ query, match, repositories, responseTypes, config })
+    const result = await handler({ query, match, repositories, responseTypes, config, accessors })
 
     await responseHandler(bot, query.message.chat.id, result)
   } catch (e) {
@@ -38,7 +38,7 @@ const handleCallbackQuery = async ({ bot, handler, query, match, repositories, e
 const sendError = (bot, msg) => {
   return (err) => {
     if (err instanceof DomainError) {
-      return bot.sendMessage(msg.chat.id, err.message, { parse_mode: 'Markdown' })
+      return bot.sendMessage(msg.chat.id, err.message, { parse_mode: 'Markdown', reply_to_message_id: msg.message_id })
     }
     console.error(err)
     bot.sendMessage(msg.chat.id, `Erro ao executar comando: ${err.message}`, {
@@ -107,6 +107,7 @@ const setupCallbackQueries = async ({ bot, repositories, accessors, commands }) 
       handler,
       query,
       match: query.data.match(handler.regex),
+      accessors,
       repositories,
       err: sendCallbackError(bot, query.id)
     })

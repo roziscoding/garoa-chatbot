@@ -1,6 +1,6 @@
 'use strict'
 
-const kickChatMember = require('../util/kick-chat-member')
+const DomainError = require('../lib/DomainError')
 
 const messages = {
   ERR_WRONG_CHAT_TYPE: 'Esse comando só pode ser executado em grupos!',
@@ -47,29 +47,7 @@ const fn = async ({ msg, match, config, chat, repositories, accessors, responseT
     : (await accessors.bot.getChatMember(chat.id, match[ 1 ])).user
 
   if (targetUser.id === msg.from.id) {
-    const member = await accessors.bot.getChatMember(chat.id, targetUser.id)
-    if ([ 'creator', 'administrator' ].includes(member.status)) {
-      return [ {
-        type: responseTypes.TEXT,
-        content: `Não consigo te remover; saia sozinho!`
-      } ]
-    }
-
-    result.push({
-      type: responseTypes.TEXT,
-      content: `Banindo ${targetUser.first_name} por espontânea vontade!`
-    })
-
-    result.push({
-      type: responseTypes.ACTION,
-      action: 'kickChatMember',
-      parameters: [
-        msg.chat.id,
-        msg.from.id
-      ]
-    })
-
-    return result
+    throw new DomainError('Você não pode votar para banir a si mesmo')
   }
 
   const vote = {
