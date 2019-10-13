@@ -1,5 +1,6 @@
 'use strict'
 
+const ngrok = require('ngrok')
 const config = require('./config')
 const commands = require('./commands')
 const database = require('./lib/database')
@@ -9,7 +10,10 @@ const TelegramBot = require('node-telegram-bot-api')
 const callbackHandlers = require('./callback-handlers')
 const { types: responseTypes, handler: responseHandler } = require('./lib/response')
 
-const getWebHookUrl = ({ webhook: { hostname }, API_TOKEN }) => `https://${hostname}/${API_TOKEN}`
+const getWebHookUrl = async ({ webhook, API_TOKEN }) => {
+  const hostname = webhook.hostname || await ngrok.connect(config.telegram.webhook.port).then(url => url.split('//')[1])
+  return `https://${hostname}/${API_TOKEN}`
+}
 
 const runCommand = async ({ bot, command, msg, match, repositories, chat, accessors, err }) => {
   try {
@@ -119,7 +123,7 @@ const setupErrorEvent = async bot => {
   return bot
 }
 
-const start = () => {
+const start = async () => {
   const bot = new TelegramBot(config.telegram.API_TOKEN, {
     webHook: {
       autoOpen: true,
@@ -129,7 +133,10 @@ const start = () => {
     onlyFirstMatch: true
   })
 
-  bot.setWebHook(getWebHookUrl(config.telegram))
+  const webHookUrl = await getWebHookUrl(config.telegram)
+
+  bot.setWebHook(webHookUrl)
+    .then(() => console.log(`Webhook set to https://${webHookUrl.split('/')[2]}`))
     .then(() => bot.getMe())
     .then(me => {
       console.log(`Escutando em @${me.username}`)
