@@ -43,7 +43,10 @@ const fn = async ({ query, match, repositories: { votings: votingsRepository }, 
 
   result.push({
     type: responseTypes.TEXT,
-    content: `${query.from.first_name} votou para banir ${voting.target.name}. Total de votos: ${updatedVoting.votes.length}`
+    content: `[${query.from.username || query.from.first_name}](tg://user?id=${query.from.id}) votou para banir ${voting.target.name}. Total de votos: ${updatedVoting.votes.length}`,
+    options: {
+      parse_mode: 'Markdown'
+    }
   })
 
   if (updatedVoting.votes.length >= config.voteban.minVotes) {
