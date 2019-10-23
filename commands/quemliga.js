@@ -7,6 +7,6 @@ const fn = async ({ responseTypes }) => {
   }]
 }
 
-fn.regex = /\/quemliga/
+fn.regex = /^\/quemliga/
 
 module.exports = fn
