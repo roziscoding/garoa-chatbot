@@ -22,6 +22,6 @@ const fn = async ({ repositories, chat, responseTypes }) => {
   } ]
 }
 
-fn.regex = /\/votings/
+fn.regex = /^\/votings/
 
 module.exports = fn
