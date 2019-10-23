@@ -7,6 +7,6 @@ const fn = async ({ responseTypes }) => {
   }]
 }
 
-fn.regex = /\/ping/
+fn.regex = /^\/ping/
 
 module.exports = fn

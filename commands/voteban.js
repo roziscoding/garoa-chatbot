@@ -96,6 +96,6 @@ const fn = async ({ msg, match, config, chat, repositories, accessors, responseT
 
 fn.markdown = false
 
-fn.regex = /\/voteban_?(\d+)?@?[^\s]* ?(.+)?/
+fn.regex = /^\/voteban_?(\d+)?@?[^\s]* ?(.+)?/
 
 module.exports = fn

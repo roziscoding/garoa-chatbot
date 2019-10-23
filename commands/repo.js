@@ -7,6 +7,6 @@ const fn = async ({ responseTypes }) => {
   }]
 }
 
-fn.regex = /\/repo/
+fn.regex = /^\/repo/
 
 module.exports = fn
